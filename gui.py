@@ -19,6 +19,7 @@ try:
 
 
     def _translate(context, text, disambig):
+
         return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
@@ -276,18 +277,18 @@ class Ui_Guindaste(object):
         Guindaste.setFont(QtGui.QFont("Helvetica"))
         self.retranslateUi(Guindaste)
 
-    # Start conection Connection
-    def connect():
-        print('Start Connection')
-        _, status = control.initial_response(ip='127.0.0.1', port=19997)
-        if status:
-            self.lcdNumber_4.display('UP')
-            self.lcdNumber_4.setPalette(self.on_color)
-        else:
-            self.lcdNumber_4.display('Off')
-            self.lcdNumber_4.setPalette(self.off_color)
+        # Start conection Connection
+        def connect():
+            print('Start Connection')
+            _, status = control.init_connection(ip='127.0.0.1', port=8080)
+            if status:
+                self.lcdNumber_4.display('UP')
+                self.lcdNumber_4.setPalette(self.on_color)
+            else:
+                self.lcdNumber_4.display('Off')
+                self.lcdNumber_4.setPalette(self.off_color)
 
-        self.pushButton_7.clicked.connect(connect)
+            self.pushButton_7.clicked.connect(connect)
 
     # # On/Off Crane
     # def crane():

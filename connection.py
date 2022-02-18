@@ -26,6 +26,7 @@ def scale_img(im, nR, nC):
 
 class Connection(object):
     def __init__(self, radius=7.5, showIm=False):
+
         self.showImage = showIm
         self.magnetStatus = False
         self.craneStatus = False
@@ -35,7 +36,8 @@ class Connection(object):
         self.currentAngleClaw = 0
         self.currentHeightHook = 0
 
-    def init_connection(self, ip='127.0.0.1', port=19997):
+
+    def init_connection(self, ip='127.0.0.1', port=8080):
         # print ('Program started')
         sim.simxFinish(-1)  # just in case, close all opened connections
         clientID = sim.simxStart(ip, port, True, True, 5000, 5)  # Connect to CoppeliaSim
@@ -45,18 +47,18 @@ class Connection(object):
         self.connectionStatus = True
 
         # Get Coppelia Objects ID
-        self.boom = sim.simxGetObjectHandle(clientID, 'Atuador_braco', sim.simx_opmode_blocking)[-1]
-        self.claw = sim.simxGetObjectHandle(clientID, 'Atuador_garra', sim.simx_opmode_blocking)[-1]
-        self.crane = sim.simxGetObjectHandle(clientID, 'Atuador_guindaste', sim.simx_opmode_blocking)[-1]
-        self.magnet = sim.simxGetObjectHandle(clientID, 'suctionPad', sim.simx_opmode_blocking)[-1]
-        self.cam = sim.simxGetObjectHandle(clientID, 'Vision_sensor', sim.simx_opmode_blocking)[-1]
-        self.cam2 = sim.simxGetObjectHandle(clientID, 'cam2', sim.simx_opmode_blocking)[-1]
-        self.proximity_sensor = sim.simxGetObjectHandle(clientID, 'Proximity_sensor', sim.simx_opmode_blocking)[-1]
+        self.atuadorCabine = sim.simxGetObjectHandle(clientID, 'Revolution_joint', sim.simx_opmode_blocking)[-1]
+        # self.claw = sim.simxGetObjectHandle(clientID, 'Atuador_garra', sim.simx_opmode_blocking)[-1]
+        # self.crane = sim.simxGetObjectHandle(clientID, 'Atuador_guindaste', sim.simx_opmode_blocking)[-1]
+        # self.magnet = sim.simxGetObjectHandle(clientID, 'suctionPad', sim.simx_opmode_blocking)[-1]
+        # self.cam = sim.simxGetObjectHandle(clientID, 'Vision_sensor', sim.simx_opmode_blocking)[-1]
+        # self.cam2 = sim.simxGetObjectHandle(clientID, 'cam2', sim.simx_opmode_blocking)[-1]
+        # self.proximity_sensor = sim.simxGetObjectHandle(clientID, 'Proximity_sensor', sim.simx_opmode_blocking)[-1]
         self.boomStructure = sim.simxGetObjectHandle(clientID, 'Braco', sim.simx_opmode_blocking)[-1]
-
-        self.err_code, _, _ = sim.simxGetVisionSensorImage(clientID, self.cam, 0, sim.simx_opmode_streaming)
-        self.err_code, _, _ = sim.simxGetVisionSensorImage(clientID, self.cam2, 0, sim.simx_opmode_streaming)
-        self.status = sim.simxReadProximitySensor(clientID, self.proximity_sensor, sim.simx_opmode_streaming)[1]
+        #
+        # self.err_code, _, _ = sim.simxGetVisionSensorImage(clientID, self.cam, 0, sim.simx_opmode_streaming)
+        # self.err_code, _, _ = sim.simxGetVisionSensorImage(clientID, self.cam2, 0, sim.simx_opmode_streaming)
+        # self.status = sim.simxReadProximitySensor(clientID, self.proximity_sensor, sim.simx_opmode_streaming)[1]
 
         return self.clientID, self.connectionStatus
 
