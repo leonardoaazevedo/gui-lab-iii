@@ -68,6 +68,12 @@ class Connection(object):
         # Now close the connection to CoppeliaSim:
         sim.simxFinish(self.clientID)
 
+    def getCraneStatus(self):
+        return self.craneStatus
+
+    def getMagnetStatus(self):
+        return self.magnetStatus
+
     # "Liga" guindaste
     def commandCraneOnOff(self):
         if self.connectionStatus:
@@ -83,3 +89,34 @@ class Connection(object):
 
     def getCraneStatus(self):
         return self.craneStatus
+
+    def getCurrentAngleClaw(self):
+        self.currentAngleClaw = radian2degree(
+            sim.simxGetObjectOrientation(self.clientID, self.boomStructure, -1, sim.simx_opmode_blocking)[-1][-1])
+        return self.currentAngleClaw
+
+    def getCamImage(self, save=False, number=1):
+        # Save or print Sensor Vision Image
+        image = None
+        if self.craneStatus and self.connectionStatus:
+            if number == 1:
+                err_code, resolution, image = sim.simxGetVisionSensorImage(self.clientID, self.cam, 0,
+                                                                           sim.simx_opmode_buffer)
+            elif number == 2:
+                err_code, resolution, image = sim.simxGetVisionSensorImage(self.clientID, self.cam2, 0,
+                                                                           sim.simx_opmode_buffer)
+            if save:
+                if err_code == sim.simx_return_ok:
+                    # basewidth = 192
+                    height, width = resolution
+                    img = np.array(image, dtype=np.uint8)
+                    img.resize([resolution[0], resolution[1], 3])
+                    img = np.array(img[::-1], dtype=np.uint8)
+
+                    bytesPerLine = 3 * width
+
+                    qImg = QtGui.QImage(img, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+                    return qImg
+                else:
+                    return None
+        return None

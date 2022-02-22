@@ -241,9 +241,28 @@ class Ui_Guindaste(object):
         self.label_distancia_lanca.setObjectName(_fromUtf8("label_distancia_lanca"))
 
         # display distância da lança
+
         self.lcdNumber_distancia_lanca = QtWidgets.QLCDNumber(self.groupBox1)
         self.lcdNumber_distancia_lanca.setGeometry(QtCore.QRect(150, 180, 60, 31))
         self.lcdNumber_distancia_lanca.setObjectName(_fromUtf8("lcdNumber_distancia_lanca"))
+
+        # janelas de confirmação
+        self.confirmWindow = QtWidgets.QMessageBox()
+        self.confirmWindow.setIcon(QtWidgets.QMessageBox.Question)
+        self.confirmWindow.setWindowTitle('Controle do Imã')
+        self.confirmWindow.setText('Desligar imã?')
+        self.confirmWindow.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        self.buttonY = self.confirmWindow.button(QtWidgets.QMessageBox.Yes)
+        self.buttonY.setText('Sim')
+        self.buttonN = self.confirmWindow.button(QtWidgets.QMessageBox.No)
+        self.buttonN.setText('Não')
+        self.confirmWindow.setDefaultButton(self.buttonN)
+
+        self.confirmWindow_2 = QtWidgets.QMessageBox()
+        self.confirmWindow_2.setIcon(QtWidgets.QMessageBox.Question)
+        self.confirmWindow_2.setWindowTitle('Controle do Guindaste')
+        self.confirmWindow_2.setText("AVISO: Imã ligado.\nDesligue-o antes de concluir esta ação.")
+        self.confirmWindow_2.setStandardButtons(QtWidgets.QMessageBox.Ok)
 
         # raises
         self.view.raise_()
@@ -290,50 +309,49 @@ class Ui_Guindaste(object):
 
             self.pushButton_7.clicked.connect(connect)
 
-    # # On/Off Crane
-    # def crane():
-    #     if control.connectionStatus:
-    #         status = control.getCraneStatus()
-    #         if status:
-    #             if control.getMagnetStatus():
-    #                 self.confirmWindow_2.exec_()
-    #                 print("Não é possível desligar o guindaste com o imã ainda ligado.")
-    #             else:
-    #                 print('Desligado')
-    #                 control.commandCraneOnOff()
-    #                 self.view.clear()
-    #                 self.view2.clear()
-    #                 self.lcdNumber_5.display('OFF')
-    #                 self.lcdNumber_5.setPalette(self.off_color)
-    #                 self.lcdNumber_2.display(0)
-    #         else:
-    #             print('Ligado')
-    #             control.commandCraneOnOff()
-    #             self.lcdNumber_5.display('UP')
-    #             self.lcdNumber_5.setPalette(self.on_color)
-    #
-    #             angle = getAngle360(control.getCurrentAngleClaw())
-    #             self.lcdNumber_2.display(round(angle))
-    #
-    #             dist = control.getStatusDist()
-    #             self.lcdNumber.display(dist)
-    #             im1 = control.getCamImage(save=True, number=1)
-    #             im2 = control.getCamImage(save=True, number=2)
-    #             if im1 is not None:
-    #                 self.pixmap = QtGui.QPixmap(im1)
-    #                 self.pixmap = self.pixmap.scaled(220, 220)
-    #                 self.view.setPixmap(self.pixmap)
-    #             if im2 is not None:
-    #                 self.pixmap2 = QtGui.QPixmap(im2)
-    #                 self.pixmap2 = self.pixmap2.scaled(220, 220)
-    #                 self.view2.setPixmap(self.pixmap2)
-    #     else:
-    #         print('Sem conexão.')
-    #
-    # self.pushButton_2.clicked.connect(crane)
-    #
-    # self.retranslateUi(Guindaste)
-    # QtCore.QMetaObject.connectSlotsByName(Guindaste)
+        def crane():
+            if control.connectionStatus:
+                status = control.getCraneStatus()
+                if status:
+                    if control.getMagnetStatus():
+                        self.confirmWindow_2.exec_()
+                        print("Não é possível desligar o guindaste com o imã ainda ligado.")
+                    else:
+                        print('Desligado')
+                        control.commandCraneOnOff()
+                        self.view.clear()
+
+                        self.lcdNumber_5.display('OFF')
+                        self.lcdNumber_5.setPalette(self.off_color)
+                        self.lcdNumber_4.display(0)
+                else:
+                    print('Ligado')
+                    control.commandCraneOnOff()
+                    self.lcdNumber_5.display('UP')
+                    self.lcdNumber_5.setPalette(self.on_color)
+
+                    angle = getAngle360(control.getCurrentAngleClaw())
+                    self.lcdNumber_6.display(round(angle))
+
+                    dist = control.getStatusDist()
+                    self.lcdNumber.display(dist)
+                    im1 = control.getCamImage(save=True, number=1)
+                    im2 = control.getCamImage(save=True, number=2)
+                    if im1 is not None:
+                        self.pixmap = QtGui.QPixmap(im1)
+                        self.pixmap = self.pixmap.scaled(220, 220)
+                        self.view.setPixmap(self.pixmap)
+                    if im2 is not None:
+                        self.pixmap2 = QtGui.QPixmap(im2)
+                        self.pixmap2 = self.pixmap2.scaled(220, 220)
+                        self.view2.setPixmap(self.pixmap2)
+            else:
+                print('Sem conexão.')
+
+        self.pushButton_2.clicked.connect(crane)
+
+        self.retranslateUi(Guindaste)
+        QtCore.QMetaObject.connectSlotsByName(Guindaste)
 
     def retranslateUi(self, Guindaste):
         Guindaste.setWindowTitle(_translate("Guindaste", "Laboratório de Projeto III - Grupo A", None))

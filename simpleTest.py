@@ -8,13 +8,11 @@
 #
 # IMPORTANT: for each successful call to simxStart, there
 # should be a corresponding call to simxFinish at the end!
-import sys
+
 import numpy as np
 from readchar import readchar
-
 import matplotlib.pyplot as mpl
 import time as time
-
 
 def levantarGuindaste(clientID, lancaVertical, pistao, expandir_pistao,  val):
     newVal = val * 0.1
@@ -64,6 +62,13 @@ def mover_tras(clientID, roda_esquerda, roda_direita, val):
     sim.simxSetJointTargetVelocity(clientID, roda_esquerda, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(clientID, roda_direita, 0, sim.simx_opmode_oneshot)
 
+def descer_ferramenta(clientID, ferramenta, val):
+    newVal = val * 1
+    sim.simxSetJointTargetVelocity(clientID, ferramenta, newVal, sim.simx_opmode_oneshot)
+    time.sleep(0.2)
+    sim.simxSetJointTargetVelocity(clientID, ferramenta, 0, sim.simx_opmode_oneshot)
+
+
 try:
     import sim
 except:
@@ -74,10 +79,10 @@ except:
     print('or appropriately adjust the file "sim.py"')
     print('--------------------------------------------------------------')
     print('')
-
+# IP Kelly 25.54.18.181
 print('Program started')
 sim.simxFinish(-1)  # just in case, close all opened connections
-clientID = sim.simxStart('25.54.18.181', 8080, True, True, 5000, 5)  # Connect to CoppeliaSim
+clientID = sim.simxStart('127.0.0.1', 8080, True, True, 5000, 5)  # Connect to CoppeliaSim
 if clientID != -1:
     print('Connected to remote API server')
 
@@ -90,13 +95,8 @@ if clientID != -1:
     lanca1 = sim.simxGetObjectHandle(clientID, 'Lanca1_joint', sim.simx_opmode_blocking)[-1]
     lanca2 = sim.simxGetObjectHandle(clientID, 'Lanca2_joint', sim.simx_opmode_blocking)[-1]
     lanca3 = sim.simxGetObjectHandle(clientID, 'Lanca3_joint', sim.simx_opmode_blocking)[-1]
-
-    wheel_radius = 0.03
-    max_speed = 3
-    max_turn = 0.3
-    speed = 0
-    turn = 0
-    b = 0.0565
+    ferramenta = sim.simxGetObjectHandle(clientID, 'Hoist_joint', sim.simx_opmode_blocking)[-1]
+    sensor_succao = sim.simxGetObjectHandle(clientID, 'suctionPadSensor', sim.simx_opmode_blocking)[-1]
 
     # Enable imshow
     mpl.ion()
@@ -105,9 +105,9 @@ if clientID != -1:
         command = input('Command: ')
 
         if command == 'o':
-            levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, 35)
+            levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, 1) #35 no da kelly
         if command == 'l':
-            levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, -35)
+            levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, -1) #35 no da kelly
         if command == 'w':
             mover_frente(clientID, roda_esquerda_handle, roda_direita_handle, 100000)
         if command == 'a':
@@ -118,6 +118,10 @@ if clientID != -1:
             expandir_lanca(clientID, lanca1, lanca2, lanca3, 30)
         if command == 'q':
             expandir_lanca(clientID, lanca1, lanca2, lanca3, -30)
+        if command == 'j':
+            descer_ferramenta(clientID, ferramenta, 3)
+        if command == 'u':
+            descer_ferramenta(clientID, ferramenta, -3)
 
 else:
     print('Failed connecting to remote API server')
