@@ -13,6 +13,7 @@ import numpy as np
 from readchar import readchar
 
 import matplotlib.pyplot as mpl
+import time as time
 
 
 def levantarGuindaste(clientID, lancaVertical, pistao, expandir_pistao,  val):
@@ -63,8 +64,6 @@ def mover_tras(clientID, roda_esquerda, roda_direita, val):
     sim.simxSetJointTargetVelocity(clientID, roda_esquerda, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(clientID, roda_direita, 0, sim.simx_opmode_oneshot)
 
-
-
 try:
     import sim
 except:
@@ -75,8 +74,6 @@ except:
     print('or appropriately adjust the file "sim.py"')
     print('--------------------------------------------------------------')
     print('')
-
-import time as time
 
 print('Program started')
 sim.simxFinish(-1)  # just in case, close all opened connections
@@ -109,21 +106,19 @@ if clientID != -1:
 
         if command == 'o':
             levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, 35)
+        if command == 'l':
+            levantarGuindaste(clientID, pistao, lancaVerticalHandle, expandir_pistao_handle, -35)
         if command == 'w':
             mover_frente(clientID, roda_esquerda_handle, roda_direita_handle, 100000)
+        if command == 'a':
+            rotacionar(clientID, cabine_rotacao_handle, 90000000)
         if command == 'd':
             rotacionar(clientID, cabine_rotacao_handle, -90000000)
         if command == 'e':
             expandir_lanca(clientID, lanca1, lanca2, lanca3, 30)
-        # while (1):
-        #     command = input('Command: ')
-        #
-        #
-        #     # Move foward
-        #     if command == 'w':
-        #     # Move back
-        #     # if command == 's':
-        #     #     MovimentarGuindaste(clientID, cabine, -1)
+        if command == 'q':
+            expandir_lanca(clientID, lanca1, lanca2, lanca3, -30)
+
 else:
     print('Failed connecting to remote API server')
 print('Program ended')
